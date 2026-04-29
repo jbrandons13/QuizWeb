@@ -16,13 +16,14 @@ router.post('/', authenticateToken, async (req,res) => {
             const newGame = await GameService.createGame({userid:userid});
             res.status(200).json(newGame);
         } catch (error) {
-            console.error(error);
+            console.error("CREATE GAME ERROR:", error);
             res.status(500).json({ error: "Internal server error" });
         }
     
     
     return {status: true}
 });
+
 
 //updategame
 router.put('/:gameid', authenticateToken, async (req,res) => {
@@ -52,10 +53,11 @@ router.get("/", authenticateToken, async (req, res) => {
             res.status(404).json({ error: "No games found for the user." });
             }
     } catch (error) {
-        console.error(error);
+        console.error("FETCH GAME LIST ERROR:", error);
         res.status(500).json({ error: "Internal server error" });
     }
 });
+
 
 //get 1 game details
 router.get("/:uuid", authenticateToken, async (req, res) => {

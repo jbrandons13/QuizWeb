@@ -21,18 +21,21 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-const allowedOrigins = [
-  'http://localhost:5173',
-  'http://127.0.0.1:5173',
-  process.env.CORS_ORIGIN_NGROK,
-  process.env.CORS_ORIGIN_1,
-  process.env.CORS_ORIGIN_2
-].filter(Boolean) as string[];
-
 const corsOptions = {
-  origin: allowedOrigins.length > 0 ? allowedOrigins : '*',
+  origin: [
+    'http://localhost',
+    'http://127.0.0.1',
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://127.0.0.1:5173',
+    'http://127.0.0.1:5174',
+    process.env.CORS_ORIGIN_NGROK
+  ].filter(Boolean) as string[],
   methods: ['GET', 'POST','DELETE','PUT'],
+  credentials: true,
 };
+
+
 
 app.use(cors(corsOptions));
 const httpServer = createServer(app);
@@ -42,14 +45,9 @@ const io = new Server(httpServer, { cors: corsOptions });
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/Project';
 
-mongoose.connect(MONGODB_URI);
-const conn = mongoose.connection;
-conn.once('open', ()=> {
-  console.log("mongo success")
-});
-conn.on('error', (error) => {
-  console.error("MongoDB connection error:", error);
-});
+mongoose.connect(MONGODB_URI)
+  .then(() => console.log("MongoDB connection success"))
+  .catch((error) => console.error("MongoDB connection error:", error));
 
 io.on('connection', waitingRoomSocket(io));
 
@@ -64,12 +62,12 @@ const PORT = process.env.PORT || 3000;
 
 const start = async (): Promise<void> => {
   try {
-    syncAllModels(); 
+    await syncAllModels(); 
     httpServer.listen(PORT, () => { 
       console.log(`Server started on port ${PORT}`);
     });   
   } catch (error) {
-    console.error(error);
+    console.error("Failed to start server:", error);
     process.exit(1);
   }
 };

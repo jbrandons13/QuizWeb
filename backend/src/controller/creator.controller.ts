@@ -38,7 +38,7 @@ router.post("/signin", async (req,res) =>{
             return res.status(401).json({ error: "Username or Password is wrong!" });
           }
         
-        const secretKey = '100'; 
+        const secretKey = process.env.JWT_SECRET || '100'; 
 
         const token = jwt.sign({ userid: user.uuid }, secretKey);
         
