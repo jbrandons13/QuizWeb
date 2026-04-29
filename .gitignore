@@ -1,5 +1,7 @@
 node_modules
 .env
+.env.local
+.env.*.local
 dist
 *.log
 venv
@@ -7,3 +9,4 @@ venv
 .vscode
 postgres_data
 mongo_data
+backend/src/controller/*.xlsx

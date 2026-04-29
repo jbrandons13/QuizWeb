@@ -1,7 +1,10 @@
 import {Request, Response, NextFunction } from 'express';
 import jwt, { VerifyErrors } from 'jsonwebtoken';
+import dotenv from 'dotenv';
 
-const secretKey = '100';
+dotenv.config();
+
+const secretKey = process.env.JWT_SECRET || '100';
 
 export const authenticateToken = (req:Request, res:Response, next:NextFunction) => {
     const token = req.headers.authorization?.split(" ")[1];
@@ -19,3 +22,4 @@ export const authenticateToken = (req:Request, res:Response, next:NextFunction) 
     }
 
 }
+
